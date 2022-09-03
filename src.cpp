@@ -6,9 +6,9 @@
 
 
 FILTER_DLL filter_dll = {
-    FILTER_FLAG_ALWAYS_ACTIVE,
+    FILTER_FLAG_ALWAYS_ACTIVE | FILTER_FLAG_NO_CONFIG,
     NULL,NULL,
-    const_cast<char*>("ÉGÉtÉFÉNÉgï¿Ç—ë÷Ç¶"),
+    const_cast<char*>("„Ç®„Éï„Çß„ÇØ„Éà‰∏¶„Å≥Êõø„Åà"),
     NULL,NULL,NULL,
     NULL,NULL,
     NULL,NULL,NULL,
@@ -27,7 +27,7 @@ DWORD init_exeditfp(FILTER* fp) {
 	for (int i = 0; i < si.filter_n; i++) {
 		FILTER* efp = (FILTER*)fp->exfunc->get_filterp(i);
         if (efp->information != NULL) {
-            if (!lstrcmpA(efp->information, "ägí£ï“èW(exedit) version 0.92 by ÇjÇdÇmÇ≠ÇÒ")) {
+            if (!lstrcmpA(efp->information, "Êã°ÂºµÁ∑®ÈõÜ(exedit) version 0.92 by Ôº´Ôº•ÔºÆ„Åè„Çì")) {
                 return (DWORD)efp->dll_hinst;
             }
         }
@@ -58,7 +58,7 @@ void fputsn(char const* _Buffer, FILE* _Stream) {
 #define FILE_LINE_MAX_LEN 256
 
 const char setting_name[] = "_Setting.txt";
-const char others[] = "ÇªÇÃëº";
+const char others[] = "„Åù„ÅÆ‰ªñ";
 char path[MAX_PATH + 1];
 char last_group_name[FILE_LINE_MAX_LEN + 1];
 
@@ -179,11 +179,17 @@ void AddExeditMediaMenu_wrap39e57_1(HMENU menu, UINT_PTR uIDNewItem, LPCSTR lpNe
 
 void set_last_group(char* str) {
     for (int i = 0; i < FILE_LINE_MAX_LEN; i++) {
-        if (str[i] == '\n') {
-            last_group_name[i] = '\0';
-            break;
+        if (IsDBCSLeadByteEx(0, str[i])) {
+            last_group_name[i] = str[i];
+            i++;
+        } else {
+            if (str[i] == '\n') {
+                last_group_name[i] = '\0';
+                break;
+            }
         }
         last_group_name[i] = str[i];
+
     }
 }
 
@@ -191,15 +197,18 @@ int split_file_folder(char* str) {
     int file_name_ptr = 0;
     char* slashptr = &last_group_name[FILE_LINE_MAX_LEN - 1];
     for (int i = 0; i < FILE_LINE_MAX_LEN; i++) {
-        if (str[i] == '\n') {
-            str[i] = '\0';
-            break;
+        if (IsDBCSLeadByteEx(0, str[i])) {
+            i++;
+        } else if (str[i] == '\n') {
+                str[i] = '\0';
+                break;
         } else if (str[i] == '\\' || str[i] == '/') {
             if (file_name_ptr) {
                 return -1;
             }
             str[i] = '\0';
             file_name_ptr = i + 1;
+
         }
     }
     return file_name_ptr;
@@ -246,7 +255,7 @@ void __cdecl AddExeditMenu_0(HMENU menu, int uIDNewItem, int flag) {
                 char* folder_name;
                 if (filename_ptr == 0) {
                     int filter_idx = get_effect_idx(str);
-                    if (0 <= filter_idx) { // ÉGÉtÉFÉNÉgÇ™ë∂ç›Ç∑ÇÈ
+                    if (0 <= filter_idx) { // „Ç®„Éï„Çß„ÇØ„Éà„ÅåÂ≠òÂú®„Åô„Çã
                         FILTER* efp = LoadedFilterTable[filter_idx];
                         int efp_flag = efp->flag;
 
@@ -260,7 +269,7 @@ void __cdecl AddExeditMenu_0(HMENU menu, int uIDNewItem, int flag) {
                 } else {
                     folder_name = str;
                 }
-                if (0 <= filename_ptr) { // exaÉtÉHÉãÉ_ÇÕ1äKëwÇ‹Ç≈
+                if (0 <= filename_ptr) { // exa„Éï„Ç©„É´„ÉÄ„ÅØ1ÈöéÂ±§„Åæ„Åß
                     char* file_name = &str[filename_ptr];
                     if (is_alias_effect(file_name, folder_name)) {
                         int alias_menu_id = abs(GetAliasUID(file_name, folder_name, 3000));
@@ -328,7 +337,7 @@ void __cdecl AddExeditMenu_2(HMENU menu, int uIDNewItem, int flag) {
                 char* folder_name;
                 if (filename_ptr == 0) {
                     int filter_idx = get_effect_idx(str);
-                    if (0 <= filter_idx) { // ÉGÉtÉFÉNÉgÇ™ë∂ç›Ç∑ÇÈ
+                    if (0 <= filter_idx) { // „Ç®„Éï„Çß„ÇØ„Éà„ÅåÂ≠òÂú®„Åô„Çã
                         FILTER* efp = LoadedFilterTable[filter_idx];
                         filter_called[filter_idx] = TRUE;
                         if ((efp->flag & 0x100) == 0) {
@@ -340,7 +349,7 @@ void __cdecl AddExeditMenu_2(HMENU menu, int uIDNewItem, int flag) {
                 } else {
                     folder_name = str;
                 }
-                if (0 <= filename_ptr) { // exaÉtÉHÉãÉ_ÇÕ1äKëwÇ‹Ç≈
+                if (0 <= filename_ptr) { // exa„Éï„Ç©„É´„ÉÄ„ÅØ1ÈöéÂ±§„Åæ„Åß
                     char* file_name = &str[filename_ptr];
                     if (is_alias_effect(file_name, folder_name)) {
                         int alias_menu_id = abs(GetAliasUID(file_name, folder_name, 3000));
@@ -381,8 +390,8 @@ BOOL __cdecl ReadAlias_wrap(char* file_name, char* folder_name) {
             }
             if (folder_name != NULL && folder_name[0] != '\0') {
                 fputs(folder_name, inifile);
-                fputc('\\', inifile);
             }
+            fputc('\\', inifile);
             fputsn(file_name, inifile);
             fclose(inifile);
         }
@@ -400,14 +409,14 @@ BOOL __cdecl ReadAlias_wrap(char* file_name, char* folder_name) {
 
 BOOL func_init(FILTER* fp) {
 
-    // aufÇÃÉpÉXÇéÊìæÅ®ê›íËÉtÉ@ÉCÉãÇÃÉpÉXÇ…ïœçXÅ@ÉpÉXÇ™250ÉoÉCÉgÇí¥Ç¶ÇÈÉvÉâÉOÉCÉìÇÕì«Ç›çûÇ‹ÇÍÇ»Ç¢ÇÊÇ§Ç»ÇÃÇ≈"_Setting"Çí«â¡ÇµÇƒÇ‡260ÉoÉCÉgÇí¥Ç¶Ç»Ç¢
+    // auf„ÅÆ„Éë„Çπ„ÇíÂèñÂæó‚ÜíË®≠ÂÆö„Éï„Ç°„Ç§„É´„ÅÆ„Éë„Çπ„Å´Â§âÊõ¥„ÄÄ„Éë„Çπ„Åå250„Éê„Ç§„Éà„ÇíË∂Ö„Åà„Çã„Éó„É©„Ç∞„Ç§„É≥„ÅØË™≠„ÅøËæº„Åæ„Çå„Å™„ÅÑ„Çà„ÅÜ„Å™„ÅÆ„Åß"_Setting"„ÇíËøΩÂä†„Åó„Å¶„ÇÇ260„Éê„Ç§„Éà„ÇíË∂Ö„Åà„Å™„ÅÑ
     GetModuleFileNameA(fp->dll_hinst, path, MAX_PATH);
     lstrcpyA(&path[lstrlenA(path) - 4], setting_name);
 
 
     exedit_dll_hinst = init_exeditfp(fp);
     if (exedit_dll_hinst == 0) {
-        MessageBoxA(fp->hwnd, "ägí£ï“èW0.92Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩ", fp->name, MB_OK);
+        MessageBoxA(fp->hwnd, "Êã°ÂºµÁ∑®ÈõÜ0.92„ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì„Åß„Åó„Åü", fp->name, MB_OK);
         return TRUE;
     }
 
@@ -432,7 +441,7 @@ BOOL func_init(FILTER* fp) {
     FILE* inifile;
     if (fopen_s(&inifile, path, "r+") == 0) {
 
-        // ç≈å„ÇÃï∂éöÇ™â¸çsÇ≈Ç»ÇØÇÍÇŒí«â¡Ç∑ÇÈ
+        // ÊúÄÂæå„ÅÆÊñáÂ≠ó„ÅåÊîπË°å„Åß„Å™„Åë„Çå„Å∞ËøΩÂä†„Åô„Çã
         fseek(inifile, -1, SEEK_END);
         if (fgetc(inifile) != '\n') {
             fputc('\n', inifile);
