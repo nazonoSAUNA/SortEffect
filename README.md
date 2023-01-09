@@ -1,4 +1,5 @@
 # エフェクト並び替えプラグイン
+[ダウンロードはこちら](../../releases/)
 ## 動作要件
 - Visual C++ 再頒布可能パッケージの2022 x86(32bit)対応の物がインストールされている必要があります【Microsoft Visual C++ 2015-2022 Redistributable(x86)】
 - マイクロソフト公式:< https://docs.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist >
